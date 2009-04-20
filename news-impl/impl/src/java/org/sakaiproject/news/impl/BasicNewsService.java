@@ -96,7 +96,7 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 
 	/** Dependency: MemoryService. */
 	protected MemoryService m_memoryService = null;
-
+	
 	/**
 	 * Dependency: MemoryService.
 	 * 
@@ -164,7 +164,7 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 		// synchronize this part??? %%%%%%
 		if (!m_storage.containsKey(source))
 		{
-			BasicNewsChannel channel = new BasicNewsChannel(source);
+			BasicNewsChannel channel = new BasicNewsChannel(source, getUserAgent());
 			m_storage.put(source, channel, DEFAULT_EXPIRATION);
 		}
 
@@ -669,5 +669,13 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 		value = value.trim();
 		if (value.length() == 0) return null;
 		return value;
+	}
+	
+	/**
+	 * Get the user agent to use for web requests.
+	 */
+	protected String getUserAgent()
+	{
+		return "Sakai/"+ ServerConfigurationService.getString("version.sakai")+ " ("+ TOOL_ID+ ")";
 	}
 }

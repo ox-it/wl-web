@@ -48,6 +48,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndImage;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
+import com.sun.syndication.io.ParsingFeedException;
 
 /***********************************************************************************
  * NewsChannel implementation
@@ -56,7 +57,9 @@ import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 public class BasicNewsChannel implements NewsChannel
 {
 	protected String m_source = null;
-
+	
+	protected String m_userAgent = null;
+	
 	protected String m_link = null;
 
 	protected String m_title = null;
@@ -94,12 +97,14 @@ public class BasicNewsChannel implements NewsChannel
 	 * 
 	 * @param source
 	 *        The URL from which the feed can be obtained
+	 * @param userAgent
+	 *        The user agent to make the request as.
 	 * @exception NewsConnectionException,
 	 *            for errors making the connection.
 	 * @exception NewsFormatException,
 	 *            for errors in the URL or errors parsing the feed.
 	 */
-	public BasicNewsChannel(String source) throws NewsConnectionException, NewsFormatException
+	public BasicNewsChannel(String source, String userAgent) throws NewsConnectionException, NewsFormatException
 	{
 		if (m_items == null)
 		{
@@ -109,6 +114,7 @@ public class BasicNewsChannel implements NewsChannel
 		// get the file, parse it and cache it
 		// throw NewsConnectionException if unable to get file
 		// throw NewsFormatException if file is in wrong format
+		m_userAgent = userAgent;
 		initChannel(source);
 	}
 
@@ -127,8 +133,8 @@ public class BasicNewsChannel implements NewsChannel
 		{
 			URL feedUrl = new URL(source);
 			FeedFetcher feedFetcher = new HttpURLFeedFetcher();
+			feedFetcher.setUserAgent(m_userAgent);
 			feed = feedFetcher.retrieveFeed(feedUrl);
-		    
 		}
 		catch (MalformedURLException e)
 		{
@@ -140,6 +146,11 @@ public class BasicNewsChannel implements NewsChannel
 			if (M_log.isDebugEnabled())
 				M_log.debug("initChannel(" + source + ") constructor: couldn't connect: " + e.getMessage());
 			throw new NewsConnectionException( rl.getString("unable_to_obtain_news_feed") + " " + source);
+		}
+		catch (ParsingFeedException pfe)
+		{
+			M_log.info("initChannel(" + source + ") constructor: couldn't parse: "+ source, pfe);
+			throw new NewsConnectionException(rl.getString("unable_to_interpret") +" " + source);
 		}
 		catch (Exception e)
 		{
