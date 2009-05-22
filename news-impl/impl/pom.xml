@@ -29,6 +29,15 @@
       <releases><enabled>true</enabled></releases>
       <snapshots><enabled>false</enabled></snapshots>
     </repository>
+    <repository>
+      <id>maven-repo.oucs</id>
+      <name>OUCS Maven Repository</name>
+      <url>http://maven-repo.oucs.ox.ac.uk/content/repositories/releases</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -65,7 +74,7 @@
     <dependency>
       <groupId>rome</groupId>
       <artifactId>modules</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.2-sakai</version>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
