@@ -76,7 +76,7 @@
     <dependency>
       <groupId>rome</groupId>
       <artifactId>modules</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.2-sakai</version>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
