@@ -7,7 +7,7 @@
 			title="News (RSS)"
 			description="For viewing RSS (or Atom) feeds such as news headlines, podcasts or blog posts.">
 
-		<configuration name="channel-url" value="http://www.sakaiproject.org/cms/index2.php?option=com_rss&amp;feed=RSS2.0&amp;no_html=1" />
+		<configuration name="channel-url" value=" http://rss.oucs.ox.ac.uk/oucs/weblearn-news/rss20.xml" />
 
 		<category name="course" />
 		<category name="project" />
