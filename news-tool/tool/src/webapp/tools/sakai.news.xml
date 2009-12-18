@@ -4,8 +4,8 @@
 
 	<tool
 			id="sakai.news"
-			title="News"
-			description="For viewing content from online sources.">
+			title="News (RSS)"
+			description="For viewing RSS (or Atom) feeds such as news headlines, podcasts or blog posts.">
 
 		<configuration name="channel-url" value="http://www.sakaiproject.org/cms/index2.php?option=com_rss&amp;feed=RSS2.0&amp;no_html=1" />
 
