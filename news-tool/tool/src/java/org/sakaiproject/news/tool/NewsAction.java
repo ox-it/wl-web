@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import lombok.extern.apachecommons.CommonsLog;
 
-import org.apache.commons.lang.StringUtils;
 import org.sakaiproject.cheftool.Context;
 import org.sakaiproject.cheftool.JetspeedRunData;
 import org.sakaiproject.cheftool.PortletConfig;
@@ -55,6 +54,9 @@ import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.cover.SessionManager;
 import org.sakaiproject.tool.cover.ToolManager;
 import org.sakaiproject.util.ResourceLoader;
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -159,8 +161,10 @@ public class NewsAction extends VelocityPortletPaneledAction
 			return buildOptionsPanelContext(portlet, context, rundata, state);
 		}
 
-		context.put(GRAPHIC_VERSION_TEXT, state.getAttribute(GRAPHIC_VERSION_TEXT));
-		context.put(FULL_STORY_TEXT, state.getAttribute(FULL_STORY_TEXT));
+		// We don't do the resource bundle lookup in init() as otherwise changing the language won't 
+		// change the text displayed in previously loaded copies of the tool.
+		context.put(GRAPHIC_VERSION_TEXT, ifNotNull(state.getAttribute(GRAPHIC_VERSION_TEXT), rb.getString("graphic.version")));
+		context.put(FULL_STORY_TEXT, ifNotNull(state.getAttribute(FULL_STORY_TEXT), rb.getString("full.story")));
 
 		// build the menu
 		Menu bar = new MenuImpl(portlet, rundata, (String) state.getAttribute(STATE_ACTION));
@@ -190,26 +194,35 @@ public class NewsAction extends VelocityPortletPaneledAction
 		{
 			// display message
 			addAlert(state, rb.getFormattedMessage("unavailable", new Object[]{e.getLocalizedMessage()}));
-			if(log.isDebugEnabled()) { log.debug(e); }
 		}
 		catch (NewsFormatException e)
 		{
 			// display message
 			addAlert(state, rb.getFormattedMessage("unavailable", new Object[]{e.getLocalizedMessage()}));
-			if(log.isDebugEnabled()) { log.debug(e); }
 		}
 		catch (Exception e)
 		{
 			// display message
 			addAlert(state, rb.getFormattedMessage("unavailable", new Object[]{e.getLocalizedMessage()}));
-			if(log.isDebugEnabled()) { log.debug(e); }
 		}
 
 		context.put("channel", channel);
 		context.put("news_items", items);
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, new ResourceLoader().getLocale());	
+
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, new ResourceLoader().getLocale());
 		df.setTimeZone(TimeService.getLocalTimeZone());
 		context.put("dateFormat", df);
+		
+		HttpServletRequest req = rundata.getRequest();
+		String headHtml = (String) req.getAttribute("sakai.html.head");
+		headHtml = headHtml==null?"":headHtml;
+		headHtml += "\n";
+		headHtml += "<script type='text/javascript' src='/library/js/jquery/1.4.2/jquery-1.4.2.min.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/mediaplayer-5.4/jwplayer.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/swfobject/swfobject.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/js/news-player.js'></script>\n";
+		req.setAttribute("sakai.html.head", headHtml);
+		
 		try 
 		{
 			// tracking event
@@ -241,6 +254,16 @@ public class NewsAction extends VelocityPortletPaneledAction
 		return (String) getContext(rundata).get("template") + "-Layout";
 
 	} // buildMainPanelContext
+
+	/**
+	 * Simple method that 
+	 * @param obj
+	 * @param dflt
+	 * @return
+	 */
+	private Object ifNotNull(Object obj, Object dflt) {
+		return (obj==null)?dflt:obj;
+	}
 
 	/**
 	 * Setup for the options panel.
@@ -385,21 +408,18 @@ public class NewsAction extends VelocityPortletPaneledAction
 			{
 				// display message
 				addAlert(state, rb.getFormattedMessage("invalidfeed", new Object[]{newChannelUrl}));
-				if(log.isDebugEnabled()) { log.debug(e); }
 				return;
 			}
 			catch (NewsFormatException e)
 			{
 				// display message
 				addAlert(state, rb.getFormattedMessage("invalidfeed", new Object[]{newChannelUrl}));
-				if(log.isDebugEnabled()) { log.debug(e); }
 				return;
 			}
 			catch (Exception e)
 			{
 				// display message
 				addAlert(state, rb.getFormattedMessage("invalidfeed", new Object[]{newChannelUrl}));
-				if(log.isDebugEnabled()) { log.debug(e); }
 				return;
 			}
 

@@ -39,6 +39,7 @@ import org.sakaiproject.news.api.NewsConnectionException;
 import org.sakaiproject.news.api.NewsFormatException;
 import org.sakaiproject.news.api.NewsItem;
 import org.sakaiproject.news.api.NewsItemEnclosure;
+import org.sakaiproject.news.api.NewsItemEnclosure.Format;
 import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.util.Validator;
@@ -60,8 +61,6 @@ import com.sun.syndication.io.ParsingFeedException;
 public class BasicNewsChannel implements NewsChannel
 {
 	protected String m_source = null;
-	
-	protected String m_userAgent = null;
 	
 	protected String m_link = null;
 
@@ -90,6 +89,8 @@ public class BasicNewsChannel implements NewsChannel
 	protected String m_imageDescription = null;
 
 	protected List<NewsItem> m_items = null;
+	
+	protected BasicNewsService m_newsService = null;
 
 	/** Our log (commons). */
 	private static Log M_log = LogFactory.getLog(BasicNewsService.class);
@@ -102,14 +103,14 @@ public class BasicNewsChannel implements NewsChannel
 	 * 
 	 * @param source
 	 *        The URL from which the feed can be obtained
-	 * @param userAgent
+	 * @param basicNewsService
 	 *        The user agent to make the request as.
 	 * @exception NewsConnectionException,
 	 *            for errors making the connection.
 	 * @exception NewsFormatException,
 	 *            for errors in the URL or errors parsing the feed.
 	 */
-	public BasicNewsChannel(String source, String userAgent) throws NewsConnectionException, NewsFormatException
+	public BasicNewsChannel(String source, BasicNewsService basicNewsService) throws NewsConnectionException, NewsFormatException
 	{
 		if (m_items == null)
 		{
@@ -119,7 +120,7 @@ public class BasicNewsChannel implements NewsChannel
 		// get the file, parse it and cache it
 		// throw NewsConnectionException if unable to get file
 		// throw NewsFormatException if file is in wrong format
-		m_userAgent = userAgent;
+		m_newsService = basicNewsService;
 		initChannel(source);
 	}
 
@@ -146,7 +147,7 @@ public class BasicNewsChannel implements NewsChannel
 			
 			URL feedUrl = new URL(source);
 			FeedFetcher feedFetcher = new HttpURLFeedFetcher();
-			feedFetcher.setUserAgent(m_userAgent);
+			feedFetcher.setUserAgent(m_newsService.getUserAgent());
 			feed = feedFetcher.retrieveFeed(feedUrl);
 		}
 		catch (MalformedURLException e)
@@ -259,16 +260,31 @@ public class BasicNewsChannel implements NewsChannel
 			for (int j = 0; j < syndEnclosures.size(); j++)
 			{
 				SyndEnclosure syndEnclosure = (SyndEnclosure) syndEnclosures.get(j);
-
+				Format format = getFormat(syndEnclosure);
 				enclosures.add(new BasicNewsItemEnclosure(
 								FormattedText.processEscapedHtml(syndEnclosure.getUrl()), 
-								syndEnclosure.getType(), syndEnclosure.getLength()));
+								syndEnclosure.getType(), syndEnclosure.getLength(), format));
 
 			}
 			iPubDate = Validator.stripAllNewlines(iPubDate);
 			m_items.add(new BasicNewsItem(iTitle, iDescription, iLink, iPubDate, enclosures));
 		}
 	} // initChannel
+
+	/**
+	 * This attempts to guess the format of the enclosure.
+	 * @param syndEnclosure
+	 * @return A format or {@link org.sakaiproject.news.api.NewsItemEnclosure.Format#UNKNOWN} if it can't work it out.
+	 */
+	private Format getFormat(SyndEnclosure syndEnclosure) {
+		Format format = Format.UNKNOWN;
+		format = m_newsService.resolveType(syndEnclosure.getType());
+		if (format == Format.UNKNOWN) {
+			format = m_newsService.resolveExtension(syndEnclosure.getUrl());
+		}
+		return format;
+	}
+
 
 	/**
 	 * A .
