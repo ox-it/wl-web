@@ -165,8 +165,10 @@ public class NewsAction extends VelocityPortletPaneledAction
 			return buildOptionsPanelContext(portlet, context, rundata, state);
 		}
 
-		context.put(GRAPHIC_VERSION_TEXT, state.getAttribute(GRAPHIC_VERSION_TEXT));
-		context.put(FULL_STORY_TEXT, state.getAttribute(FULL_STORY_TEXT));
+		// We don't do the resource bundle lookup in init() as otherwise changing the language won't 
+		// change the text displayed in previously loaded copies of the tool.
+		context.put(GRAPHIC_VERSION_TEXT, ifNotNull(state.getAttribute(GRAPHIC_VERSION_TEXT), rb.getString("graphic.version")));
+		context.put(FULL_STORY_TEXT, ifNotNull(state.getAttribute(FULL_STORY_TEXT), rb.getString("full.story")));
 
 		// build the menu
 		Menu bar = new MenuImpl(portlet, rundata, (String) state.getAttribute(STATE_ACTION));
@@ -230,6 +232,16 @@ public class NewsAction extends VelocityPortletPaneledAction
 		return (String) getContext(rundata).get("template") + "-Layout";
 
 	} // buildMainPanelContext
+
+	/**
+	 * Simple method that 
+	 * @param attribute
+	 * @param string
+	 * @return
+	 */
+	private Object ifNotNull(Object obj, Object dflt) {
+		return (obj==null)?dflt:obj;
+	}
 
 	/**
 	 * Setup for the options panel.
