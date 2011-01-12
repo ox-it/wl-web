@@ -46,12 +46,6 @@
             <param-value>news/chef_news</param-value>            
         </init-param>
         <init-param>
-            <param-name>graphic_version</param-name>
-            <param-value>Graphic Version</param-value>            
-        </init-param>
-        <init-param>
-            <param-name>full_story</param-name>
-            <param-value>Full Story</param-value>            
         </init-param>
         <load-on-startup>1</load-on-startup>
      </servlet>
