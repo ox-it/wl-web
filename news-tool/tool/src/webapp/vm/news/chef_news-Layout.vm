@@ -66,10 +66,10 @@
 				</div>	
 				<p class="textPanelFooter">
 			#if($item.Link)
-				 <a href="$item.Link" target="_blank" title="$tlang.getString("goto.item")">($full_story)</a>
+				 <a href="$item.Link" target="_blank" title="$tlang.getString("goto.item")">($full_story)</a> <br>
 			 #end
 			#foreach ($enc in $item.Enclosures)
-			 	<a href="$enc.Url" target="_blank" title="$enc.Ur)">$enc.Url</a> ($enc.Type, $enc.Length Bytes) <br>
+				<a href="$enc.Url" class="enclosure $enc.format.name().toLowerCase()" target="_blank" title="$enc.Url">$enc.Url</a> ($enc.Type, $enc.Length Bytes) <br>
 			#end
 			 #if($item.Pubdate && !($item.Pubdate == ""))
 				($item.Pubdate)
