@@ -34,6 +34,11 @@ package org.sakaiproject.news.api;
 public interface NewsItemEnclosure
 {
 	/**
+	 * The format of the Enclosure.
+	 */
+	public enum Format {AUDIO, VIDEO, UNKNOWN};
+	
+	/**
 	 * Access the Url of the enclosed item.
 	 * 
 	 * @return The url of the enclosure.
@@ -46,6 +51,12 @@ public interface NewsItemEnclosure
 	 * @return The type of the enclosed item.
 	 */
 	public String getType();
+	
+	/**
+	 * Get the format of this item.
+	 */
+	public Format getFormat();
+	
 
 	/**
 	 * Access the length in Bytes of the enclosed item.

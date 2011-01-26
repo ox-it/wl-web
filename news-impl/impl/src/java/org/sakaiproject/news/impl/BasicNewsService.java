@@ -38,6 +38,7 @@ import org.sakaiproject.memory.api.MemoryService;
 import org.sakaiproject.news.api.NewsChannel;
 import org.sakaiproject.news.api.NewsConnectionException;
 import org.sakaiproject.news.api.NewsFormatException;
+import org.sakaiproject.news.api.NewsItemEnclosure.Format;
 import org.sakaiproject.news.api.NewsService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
@@ -165,7 +166,7 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 		// synchronize this part??? %%%%%%
 		if (!m_storage.containsKey(source))
 		{
-			BasicNewsChannel channel = new BasicNewsChannel(source, getUserAgent());
+			BasicNewsChannel channel = new BasicNewsChannel(source, this);
 			m_storage.put(source, channel, DEFAULT_EXPIRATION);
 		}
 
@@ -675,9 +676,52 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 	/**
 	 * Get the user agent to use for web requests.
 	 */
-	protected String getUserAgent()
+	public String getUserAgent()
 	{
 		return "Sakai/"+ ServerConfigurationService.getString("version.sakai")+ " ("+ TOOL_ID+ ")";
+	}
+	
+	/**
+	 * Attempt to find out if the mime type is supported by an in-page player.
+	 * @param type
+	 * @return
+	 */
+	public Format resolveType(String type)
+	{
+		Format format = Format.UNKNOWN;
+		if (type != null)
+		{
+			type = type.toLowerCase();
+			if ("audio/mpeg".equals(type)) {
+				format = Format.AUDIO;
+			} else if ("video/mp4".equals(type)) {
+				format = Format.VIDEO;
+			}
+		}
+		return format;
+	}
+	
+	/**
+	 * Attempt to find out if the url is supported by an in-page player by looking at the extension.
+	 * @param url
+	 * @return
+	 */
+	public Format resolveExtension(String url)
+	{
+		Format format = Format.UNKNOWN; 
+		if (url != null)
+		{
+			int lastDot = url.lastIndexOf(".");
+			if (lastDot >= 0 && lastDot < url.length()) {
+				String extension = url.substring(lastDot+1).toLowerCase();
+				if ("mp3".equals(extension)) {
+					format = Format.AUDIO;
+				} else if ("mp4".equals(extension) || "m4v".equals(extension)) {
+					format = Format.VIDEO;
+				}
+			}
+		}
+		return format;
 	}
 
 	public void transferCopyEntities(String fromContext, String toContext, List ids, boolean cleanup)
