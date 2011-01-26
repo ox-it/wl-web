@@ -61,6 +61,19 @@
         <load-on-startup>1</load-on-startup>
      </servlet>
 
+    <servlet>
+        <servlet-name>
+           oxford-podcasts
+        </servlet-name>
+        <servlet-class>
+            org.sakaiproject.news.tool.NewsAction
+        </servlet-class>
+        <init-param>
+            <param-name>template</param-name>
+            <param-value>news/chef_news</param-value>            
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+     </servlet>
 
     <listener>
         <listener-class>org.sakaiproject.util.ToolListener</listener-class>
