@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.sakaiproject.cheftool.Context;
 import org.sakaiproject.cheftool.JetspeedRunData;
 import org.sakaiproject.cheftool.PortletConfig;
@@ -197,7 +199,16 @@ public class NewsAction extends VelocityPortletPaneledAction
 
 		context.put("channel", channel);
 		context.put("news_items", items);
- 
+		
+		HttpServletRequest req = rundata.getRequest();
+		String headHtml = (String) req.getAttribute("sakai.html.head");
+		headHtml = headHtml==null?"":headHtml;
+		headHtml += "\n";
+		headHtml += "<script type='text/javascript' src='/library/js/jquery/1.4.2/jquery-1.4.2.min.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/mediaplayer-5.4/jwplayer.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/swfobject/swfobject.js'></script>\n";
+		headHtml += "<script type='text/javascript' src='/library/js/news-player.js'></script>\n";
+		req.setAttribute("sakai.html.head", headHtml);
 		try 
 		{
 			EventTrackingService.post(EventTrackingService.newEvent(FEED_ACCESS, "/news/site/" +

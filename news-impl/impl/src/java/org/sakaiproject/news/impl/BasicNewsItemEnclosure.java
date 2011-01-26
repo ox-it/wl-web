@@ -44,6 +44,9 @@ public class BasicNewsItemEnclosure implements NewsItemEnclosure {
 	/** the length in Bytes of the enclosure */
 	private long length;
 	
+	/** The format of the enclosure */
+	private Format format;
+	
 	/**
 	 * Construct a BasicNewsItemEnclosure
 	 * 
@@ -51,10 +54,11 @@ public class BasicNewsItemEnclosure implements NewsItemEnclosure {
 	 * @param type
 	 * @param length
 	 */
-	public BasicNewsItemEnclosure(String url, String type, long length) {
+	public BasicNewsItemEnclosure(String url, String type, long length, Format format) {
 		this.url = url;
 		this.type = type;
 		this.length = length;
+		this.format = format;
 	}
 	
 	/**
@@ -112,6 +116,10 @@ public class BasicNewsItemEnclosure implements NewsItemEnclosure {
 	 */
 	public void setLength(long length) {
 		this.length = length;
+	}
+
+	public Format getFormat() {
+		return format;
 	}
 	
 }
