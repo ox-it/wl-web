@@ -91,6 +91,29 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 
 	// The cache in which channels and news-items are held
 	protected Cache m_storage = null;
+	
+	// Types for detecting audio/video enclosures.
+	protected Collection<String> audioExtensions;
+	protected Collection<String> videoExtensions;
+	protected Collection<String> audioMimeTypes;
+	protected Collection<String> videoMimeTypes;
+
+	public void setAudioExtensions(Collection<String> audioExtensions) {
+		this.audioExtensions = audioExtensions;
+	}
+
+	public void setVideoExtensions(Collection<String> videoExtensions) {
+		this.videoExtensions = videoExtensions;
+	}
+
+	public void setAudioMimeTypes(Collection<String> audioMimeTypes) {
+		this.audioMimeTypes = audioMimeTypes;
+	}
+
+	public void setVideoMimeTypes(Collection<String> videoMimeTypes) {
+		this.videoMimeTypes = videoMimeTypes;
+	}
+
 
 	/**********************************************************************************************************************************************************************************************************************************************************
 	 * Constructors, Dependencies and their setter methods
@@ -706,9 +729,9 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 		if (type != null)
 		{
 			type = type.toLowerCase();
-			if ("audio/mpeg".equals(type)) {
+			if (audioMimeTypes.contains(type)) {
 				format = Format.AUDIO;
-			} else if ("video/mp4".equals(type)) {
+			} else if (videoMimeTypes.contains(type)) {
 				format = Format.VIDEO;
 			}
 		}
@@ -728,9 +751,9 @@ public class BasicNewsService implements NewsService, EntityTransferrer
 			int lastDot = url.lastIndexOf(".");
 			if (lastDot >= 0 && lastDot < url.length()) {
 				String extension = url.substring(lastDot+1).toLowerCase();
-				if ("mp3".equals(extension)) {
+				if (audioExtensions.contains(extension)) {
 					format = Format.AUDIO;
-				} else if ("mp4".equals(extension) || "m4v".equals(extension)) {
+				} else if (videoExtensions.contains(extension)) {
 					format = Format.VIDEO;
 				}
 			}
