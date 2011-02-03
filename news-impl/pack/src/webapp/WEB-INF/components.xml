@@ -9,6 +9,29 @@
 			destroy-method="destroy"
 			singleton="true">
 		<property name="memoryService"><ref bean="org.sakaiproject.memory.api.MemoryService"/></property>
+		<property name="audioExtensions">
+			<set>
+				<value>mp3</value>
+			</set>
+		</property>
+		<property name="videoExtensions">
+			<set>
+				<value>mp4</value>
+				<value>m4v</value>
+				<value>flv</value>
+			</set>
+		</property>
+		<property name="audioMimeTypes">
+			<set>
+				<value>audio/mpeg</value>
+			</set>
+		</property>
+		<property name="videoMimeTypes">
+			<set>
+				<value>video/mp4</value>
+				<value>video/x-flv</value>
+			</set>
+		</property>
 	</bean>
 
 </beans>
