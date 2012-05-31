@@ -1169,7 +1169,8 @@ public class IFrameAction extends VelocityPortletPaneledAction
 				infoUrl = "http://" + infoUrl;
 			}
 			String description = StringUtils.trimToNull(data.getParameters().getString("description"));
-			description = FormattedText.processEscapedHtml(description);
+			// WL-1294 Don't filter the site description
+			//description = FormattedText.processEscapedHtml(description); 
 
 			// update the site info
 			try
