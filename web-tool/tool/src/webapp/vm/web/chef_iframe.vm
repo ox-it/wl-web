@@ -27,7 +27,8 @@
 			 #if(!$TargetPageUrl)	
 				src="$!validator.escapeHtml($url)"	
   			 #end
-			onload="updateMainFrameHeight();">
+  			 #if($resize) onload="updateMainFrameHeight();" #end
+			>
 		</iframe>
 	</div>
 </div>
@@ -57,20 +58,26 @@
 	
 				var innerIframe = document.getElementById("wciframe");
 				var innerIframeName = innerIframe.name;
-				var iHeight = 0;
-				// Internet Explorer way to detect height
-				if (innerIframe.contentWindow.document.body.scrollHeight)
-				{
-					iHeight = innerIframe.contentWindow.document.body.scrollHeight;
-				}
+				var iHeight = getInnerHeight(innerIframe);
 				document.getElementById(innerIframeName).style.height=iHeight + "px";
-				height += iHeight;
+				
+				height = iHeight;
 				if (frame) 
 				{
+					// Surrounding frame
 					frame.height = height;
 				}
 			}	
 		}
-		
 	}
+	
+	function getInnerHeight(innerIframe)
+	{
+		var iHeight = 0;
+		// Internet Explorer way to detect height
+		var innerDocument = innerIframe.contentWindow.document;
+		iHeight = Math.max(innerDocument.body.scrollHeight, innerDocument.documentElement.scrollHeight);
+		return iHeight;
+	}
+	
 </script>
