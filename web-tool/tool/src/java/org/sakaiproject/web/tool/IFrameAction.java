@@ -53,16 +53,23 @@ import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.site.cover.SiteService;
+import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.tool.api.Placement;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.cover.SessionManager;
 import org.sakaiproject.tool.cover.ToolManager;
+import org.sakaiproject.util.FormattedText;
+import org.sakaiproject.util.RequestFilter;
+import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.util.StringUtil;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.user.cover.UserDirectoryService;
 import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -102,6 +109,10 @@ public class IFrameAction extends VelocityPortletPaneledAction
 	
 	/** The resize state, config and context. */
 	protected final static String RESIZE = "resize";
+
+    /** The value in state and context for the popup parameter. If a popup is used, it should be opened from the iframe
+     * in order to keep the menu bar accessible */
+    public static final String POP_UP = "popup";
 
 	/** The custom height from user input * */
 	protected final static String CUSTOM_HEIGHT = "customNumberField";
@@ -314,6 +325,9 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		
 		// set the resize
 		state.setAttribute(RESIZE, Boolean.valueOf(config.getProperty(RESIZE, "false")));
+
+        // Set the popup attribute
+        state.setAttribute(POP_UP, Boolean.valueOf(config.getProperty(POP_UP, "false")));
 		
 		state.setAttribute(ANNOTATED_TEXT, config.getProperty(ANNOTATED_TEXT, ""));
 		
@@ -693,7 +707,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 
 	/**
 	 * Expand one macro reference
-	 * @param text Expand macros found in this text
+	 * @param sb Expand macros found in this text
 	 * @param macroName Macro name
 	 */
 	private void expand(StringBuilder sb, String macroName)
@@ -763,10 +777,19 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		// set our configuration into the context for the vm
 		String url = (String) state.getAttribute(URL);
 		String special = (String) state.getAttribute(SPECIAL);
+
+        /* If redirection is enabled, skip everything and just send an HTTP redirect */
+        if(state.getAttribute(POP_UP) != null && (Boolean) state.getAttribute(POP_UP) &&
+                !SiteService.allowUpdateSite(ToolManager.getCurrentPlacement().getContext())){
+            sendParentRedirect((HttpServletResponse) ThreadLocalManager.get(RequestFilter.CURRENT_HTTP_RESPONSE), url);
+            return null;
+        }
+
 		context.put(URL, url);
 		context.put(HEIGHT, state.getAttribute(HEIGHT));
 		context.put(RESIZE, state.getAttribute(RESIZE));
-		
+		context.put(POP_UP, state.getAttribute(POP_UP));
+
 		//for annotatedurl
 		context.put(TARGETPAGE_URL, state.getAttribute(TARGETPAGE_URL));
 		context.put(TARGETPAGE_NAME, state.getAttribute(TARGETPAGE_NAME));
@@ -778,9 +801,9 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		// setup for the options menu if needed
 		
 		String hideOptions = (String) state.getAttribute(HIDE_OPTIONS);
-		
-		
-		if (hideOptions != null && "true".equalsIgnoreCase(hideOptions)) 
+
+
+		if (hideOptions != null && "true".equalsIgnoreCase(hideOptions))
 		{
 			// always hide Options menu if hide.options is specified
 		} else if (SiteService.allowUpdateSite(ToolManager.getCurrentPlacement().getContext()))
@@ -926,6 +949,10 @@ public class IFrameAction extends VelocityPortletPaneledAction
 			context.put(RESIZE, Boolean.TRUE);
 		}
 
+        if(state.getAttribute(POP_UP) != null) {
+            context.put(POP_UP, state.getAttribute(POP_UP));
+        }
+
 		context.put(TITLE, state.getAttribute(TITLE));
 		context.put("tlang", rb);
 
@@ -950,8 +977,6 @@ public class IFrameAction extends VelocityPortletPaneledAction
 				if ((page.getTools() != null) && (page.getTools().size() == 1))
 				{
 					context.put("showPopup", Boolean.TRUE);
-					context.put("popup", Boolean.valueOf(page.isPopUp()));
-					
 					context.put("pageTitleEditable", Boolean.TRUE);
 					context.put("page_title", (String) state.getAttribute(STATE_PAGE_TITLE));
 				}
@@ -1082,7 +1107,10 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		boolean resize = data.getParameters().getBoolean(RESIZE);
 		state.setAttribute(RESIZE, resize);
 		placement.getPlacementConfig().setProperty(RESIZE, Boolean.toString(resize));
-		
+
+        boolean popUp = data.getParameters().getBoolean(POP_UP);
+        state.setAttribute(POP_UP, popUp);
+        placement.getPlacementConfig().setProperty(POP_UP, Boolean.toString(popUp));
 
 		// title
 		String title = data.getParameters().getString(TITLE);
@@ -1133,9 +1161,9 @@ public class IFrameAction extends VelocityPortletPaneledAction
 					}
 					page.setTitle(newPageTitle);
 					state.setAttribute(STATE_PAGE_TITLE, newPageTitle);
-					
+
 					// popup
-					boolean popup = data.getParameters().getBoolean("popup");
+					boolean popup = data.getParameters().getBoolean(POP_UP);
 					page.setPopup(popup);
 				}
 			}
