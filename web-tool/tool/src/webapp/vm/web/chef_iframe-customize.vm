@@ -126,7 +126,7 @@
 				<input type="checkbox" value="true" name="popup" id="opentrue" #if ($popup) checked="checked" #end  class="indnt1" />
 				<!-- hidden to force a submission when the checkbox is disabled -->
 				<input type="hidden" name="popupHidden" id="opentrueHidden" value="true" disabled="true" />
-				<label for="opentrue">$tlang.getString("gen.info.pop") <span style="display: none; font-style: italic;" id="popupDisabledMessage">Must be enabled for insecure content (http).</span></label>
+				<label for="opentrue">$tlang.getString("gen.info.pop") <span style="display: none; font-style: italic;" id="popupDisabledMessage">$tlang.getString("gen.info.pop.msg")</span></label>
 		</p>
 	#end
 
