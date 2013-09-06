@@ -14,28 +14,29 @@
 	}
 
 	checkPopupIfProtocolIsHttp = function() {
-		popupCheckbox = window.self.document.getElementById('opentrue');
-		popupHidden = window.self.document.getElementById('opentrueHidden');
-		popupMessage = window.self.document.getElementById('popupDisabledMessage');
+		var popupCheckbox = window.self.document.getElementById('opentrue');
+		var popupHidden = window.self.document.getElementById('opentrueHidden');
+		var popupMessage = window.self.document.getElementById('popupDisabledMessage');
 
 		if(popupCheckbox && popupHidden && popupDisabledMessage) {
 			if(urlStartsWithHttp()) {
 				popupCheckbox.checked  = true;
 				popupCheckbox.disabled = true;
-				
+
 				// now popupCheckbox can't be submitted so we make a hidden variable
-				popupCheckbox.name = "popupDisabled";
+				popupCheckbox.name   = "popupDisabled";
 				popupHidden.disabled = false;
-				popupHidden.name   = "popup";
-				
+				popupHidden.name     = "popup";
+
 				popupMessage.style.display = 'inline';
 
 			} else {
 
 				popupCheckbox.disabled = false;
-				popupCheckbox.name = "popup"
-				popupHidden.disabled = true;
-				popupHidden.name = "popupHidden";
+				popupCheckbox.name     = "popup"
+				popupHidden.disabled   = true;
+				popupHidden.name       = "popupHidden";
+
 				popupMessage.style.display = 'none';
 			}
 		}
