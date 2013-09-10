@@ -59,6 +59,8 @@
 		if (urlInput) {
 			addEvent(urlInput, 'change', checkPopupIfProtocolIsHttp);
 			addEvent(urlInput, 'keyup', checkPopupIfProtocolIsHttp);
+			addEvent(urlInput, 'input', checkPopupIfProtocolIsHttp); // IE
+			addEvent(urlInput, 'paste', checkPopupIfProtocolIsHttp); // Others
 		}
 	});
 
