@@ -58,6 +58,9 @@
 		checkPopupIfProtocolIsHttp();
 		if (urlInput) {
 			addEvent(urlInput, 'change', checkPopupIfProtocolIsHttp);
+			addEvent(urlInput, 'keyup', checkPopupIfProtocolIsHttp);
+			addEvent(urlInput, 'input', checkPopupIfProtocolIsHttp); // IE
+			addEvent(urlInput, 'paste', checkPopupIfProtocolIsHttp); // Others
 		}
 	});
 
@@ -123,7 +126,7 @@
 #end
 
 	#if ($showPopup)
-		<p class ="checkbox labelindnt">
+		<p class="checkbox labelindnt">
 				<input type="checkbox" value="true" name="popup" id="opentrue" #if ($popup) checked="checked" #end  class="indnt1" />
 				<!-- hidden to force a submission when the checkbox is disabled -->
 				<input type="hidden" name="popupHidden" id="opentrueHidden" value="true" disabled="true" />
