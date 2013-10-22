@@ -1137,7 +1137,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 			String source = StringUtil.trimToZero(data.getParameters().getString(SOURCE));
 			if ((source != null) && (source.length() > 0) && (!source.startsWith("/")) && (source.indexOf("://") == -1))
 			{
-				source = "https://" + source;
+				source = "//" + source;
 			}
 
 			// update state
@@ -1148,9 +1148,11 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		{
 			if ((infoUrl != null) && (infoUrl.length() > 0))
 			{
+				String httpServerName = String.format("http://%s", ServerConfigurationService.getServerName());
+				boolean serverUsesHttps = ServerConfigurationService.getServerUrl().startsWith("https");
 				if (!infoUrl.startsWith("/") && (infoUrl.indexOf("://") == -1)) {
-					infoUrl = "https://" + infoUrl;
-				} else if (infoUrl.startsWith("http://weblearn.ox.ac.uk/")) {
+					infoUrl = "//" + infoUrl;
+				} else if (infoUrl.startsWith(httpServerName) && serverUsesHttps) {
 					infoUrl = infoUrl.replaceFirst("http://", "//");
 				}
 			}
