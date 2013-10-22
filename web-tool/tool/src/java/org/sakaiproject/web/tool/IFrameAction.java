@@ -1151,7 +1151,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 				if (!infoUrl.startsWith("/") && (infoUrl.indexOf("://") == -1)) {
 					infoUrl = "https://" + infoUrl;
 				} else if (infoUrl.startsWith("http://weblearn.ox.ac.uk/")) {
-					infoUrl = infoUrl.replaceFirst("http", "https");
+					infoUrl = infoUrl.replaceFirst("http://", "//");
 				}
 			}
 			String description = StringUtil.trimToNull(data.getParameters().getString("description"));
