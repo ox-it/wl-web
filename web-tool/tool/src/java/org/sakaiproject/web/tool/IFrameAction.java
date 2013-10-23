@@ -1137,7 +1137,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 			String source = StringUtil.trimToZero(data.getParameters().getString(SOURCE));
 			if ((source != null) && (source.length() > 0) && (!source.startsWith("/")) && (source.indexOf("://") == -1))
 			{
-				source = "http://" + source;
+				source = "//" + source;
 			}
 
 			// update state
@@ -1146,9 +1146,15 @@ public class IFrameAction extends VelocityPortletPaneledAction
 
 		else if (SPECIAL_WORKSITE.equals(state.getAttribute(SPECIAL)))
 		{
-			if ((infoUrl != null) && (infoUrl.length() > 0) && (!infoUrl.startsWith("/")) && (infoUrl.indexOf("://") == -1))
+			if ((infoUrl != null) && (infoUrl.length() > 0))
 			{
-				infoUrl = "http://" + infoUrl;
+				String httpServerName = String.format("http://%s", ServerConfigurationService.getServerName());
+				boolean serverUsesHttps = ServerConfigurationService.getServerUrl().startsWith("https");
+				if (!infoUrl.startsWith("/") && (infoUrl.indexOf("://") == -1)) {
+					infoUrl = "//" + infoUrl;
+				} else if (infoUrl.startsWith(httpServerName) && serverUsesHttps) {
+					infoUrl = infoUrl.replaceFirst("http://", "//");
+				}
 			}
 			String description = StringUtil.trimToNull(data.getParameters().getString("description"));
 			// WL-1294 Don't filter the site description
