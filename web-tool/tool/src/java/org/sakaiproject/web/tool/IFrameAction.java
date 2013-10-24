@@ -21,13 +21,9 @@
 
 package org.sakaiproject.web.tool;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Locale;
+import java.util.*;
 import java.net.URLEncoder;
 import java.io.File;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -1155,11 +1151,15 @@ public class IFrameAction extends VelocityPortletPaneledAction
 				}
 
 				// If the site info url is hosted by sakai then make it a relative link.
-				String serverName = ServerConfigurationService.getServerName();
+				Collection<String> serverNames = new ArrayList<String>();
+				serverNames.add(ServerConfigurationService.getServerName());
+				serverNames.addAll(ServerConfigurationService.getInstance().getServerNameAliases());
 
-				// if the supplied url starts with protocol//serverName:port/
-				Pattern serverUrlPattern = Pattern.compile(String.format("^(https?:)?//%s:?\\d*/", serverName));
-				infoUrl = serverUrlPattern.matcher(infoUrl).replaceFirst("/");
+				for (String serverName : serverNames) {
+					// if the supplied url starts with protocol//serverName:port/
+					Pattern serverUrlPattern = Pattern.compile(String.format("^(https?:)?//%s:?\\d*/", serverName));
+					infoUrl = serverUrlPattern.matcher(infoUrl).replaceFirst("/");
+				}
 			}
 			String description = StringUtil.trimToNull(data.getParameters().getString("description"));
 			// WL-1294 Don't filter the site description
