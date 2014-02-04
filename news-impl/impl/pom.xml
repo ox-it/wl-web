@@ -62,9 +62,9 @@
     </dependency>
 <!-- needed for news api impl -->
     <dependency>
-      <groupId>rome</groupId>
+      <groupId>com.rometools</groupId>
       <artifactId>rome</artifactId>
-      <version>1.0-sakai</version>
+      <version>2.0.0-alpha-ox1</version>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
@@ -72,9 +72,9 @@
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>rome</groupId>
-      <artifactId>modules</artifactId>
-      <version>0.3.2-sakai</version>
+      <groupId>com.rometools</groupId>
+      <artifactId>rome-modules</artifactId>
+      <version>2.0.0-alpha-ox1</version>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
