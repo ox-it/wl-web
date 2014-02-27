@@ -49,8 +49,8 @@ import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndImage;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
+import org.rometools.fetcher.FeedFetcher;
+import org.rometools.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.io.ParsingFeedException;
 
 /***********************************************************************************
