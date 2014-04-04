@@ -5,7 +5,7 @@
 	<tool
 			id="sakai.iframe"
 			title="Web Content"
-			description="For accessing an external website within the site.">
+			description="For accessing internal resources or an external website within the site.">
 
 		<configuration name="source" value="" />
 		<configuration name="height" value="600px" />
