@@ -1385,21 +1385,21 @@ public class PortletIFrame extends GenericPortlet {
 
         // For a protocol-relative URL, we validate with protocol attached 
         // RFC 1808 Section 4
-        if ((urlToValidate.startsWith("//")) && (urlToValidate.indexOf("://") == -1))
+        if ((escapedURL.startsWith("//")) && (escapedURL.indexOf("://") == -1))
         {
-            urlToValidate = PROTOCOL_PREFIX + urlToValidate;
+            escapedURL = PROTOCOL_PREFIX + urlToValidate;
         }
 
         // For a site-relative URL, we validate with host name and protocol attached 
         // SAK-13787 SAK-23752
-        if ((urlToValidate.startsWith("/")) && (urlToValidate.indexOf("://") == -1))
+        if ((escapedURL.startsWith("/")) && (escapedURL.indexOf("://") == -1))
         {
-            urlToValidate = HOST_PREFIX + urlToValidate;
+            escapedURL = HOST_PREFIX + urlToValidate;
         }
 
         // Validate the url
         UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
-        return urlValidator.isValid(urlToValidate);
+        return urlValidator.isValid(escapedURL);
     }
 
     public String sanitizeHrefURL(String urlToEscape) {
