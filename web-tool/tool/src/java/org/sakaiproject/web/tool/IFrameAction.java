@@ -807,6 +807,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		
 		String hideOptions = (String) state.getAttribute(HIDE_OPTIONS);
 
+
 		if (hideOptions != null && "true".equalsIgnoreCase(hideOptions))
 		{
 			// always hide Options menu if hide.options is specified
@@ -815,13 +816,7 @@ public class IFrameAction extends VelocityPortletPaneledAction
 		{
 			context.put("options_title", ToolManager.getCurrentPlacement().getTitle() + " " + rb.getString("gen.options"));
 		}
-
-		// add a message if showing web content which is probably blocked mixed content
-		Boolean isPopup = (Boolean) state.getAttribute(POP_UP);
-		if(isPopup != null && url != null) {
-			context.put("has_mixed_content", isPopup && url.matches("http:.*"));
-		}
-
+	
 		// tracking event
 		String siteId = "";
 		try
