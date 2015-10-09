@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.Date;
+import java.util.Collection;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -636,7 +637,12 @@ public class PortletIFrame extends GenericPortlet {
 					    String infoUrl = StringUtils.trimToNull(s.getInfoUrl());
 					    if (infoUrl != null)
 					    {
-						    context.put("info_url", FormattedText.escapeHtmlFormattedTextarea(infoUrl));
+                                                   //Check if infoUrl is relative? and prepend the server url
+                                                   String serverUrl = ServerConfigurationService.getServerUrl();
+                                                   if(infoUrl.startsWith("/") && infoUrl.indexOf("://") == -1){
+                                                       infoUrl = serverUrl + infoUrl;
+                                                   }
+                                                   context.put("info_url", FormattedText.escapeHtmlFormattedTextarea(infoUrl));
 					    }
 
 					    String description = StringUtils.trimToNull(s.getDescription());
@@ -902,9 +908,16 @@ public class PortletIFrame extends GenericPortlet {
             // Handle the infoUrl
             if (SPECIAL_WORKSITE.equals(special))
             {
-                if ((infoUrl != null) && (infoUrl.length() > 0) && (!infoUrl.startsWith("/")) && (infoUrl.indexOf("://") == -1))
-                {
-                    infoUrl = "http://" + infoUrl;
+                // If the site info url has server url then make it a relative link.
+                Collection<String> serverNames = new ArrayList<String>();
+                //get the server name
+                serverNames.add(new URL(ServerConfigurationService.getServerUrl()).getHost());
+                serverNames.addAll(ServerConfigurationService.getInstance().getServerNameAliases());
+
+                for (String serverName : serverNames) {
+                    // if the supplied url starts with protocol//serverName:port/
+                    Pattern serverUrlPattern = Pattern.compile(String.format("^(https?:)?//%s:?\\d*/", serverName));
+                    infoUrl = serverUrlPattern.matcher(infoUrl).replaceFirst("/");
                 }
                 String description = StringUtils.trimToNull(request.getParameter("description"));
     
