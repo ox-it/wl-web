@@ -908,16 +908,19 @@ public class PortletIFrame extends GenericPortlet {
             // Handle the infoUrl
             if (SPECIAL_WORKSITE.equals(special))
             {
-                // If the site info url has server url then make it a relative link.
-                Collection<String> serverNames = new ArrayList<String>();
-                //get the server name
-                serverNames.add(new URL(ServerConfigurationService.getServerUrl()).getHost());
-                serverNames.addAll(ServerConfigurationService.getInstance().getServerNameAliases());
+                //Check info-url for null and empty
+                if(infoUrl != null && !infoUrl.equals("")){
+                    // If the site info url has server url then make it a relative link.
+                    Collection<String> serverNames = new ArrayList<String>();
+                    //get the server name
+                    serverNames.add(new URL(ServerConfigurationService.getServerUrl()).getHost());
+                    serverNames.addAll(ServerConfigurationService.getInstance().getServerNameAliases());
 
-                for (String serverName : serverNames) {
-                    // if the supplied url starts with protocol//serverName:port/
-                    Pattern serverUrlPattern = Pattern.compile(String.format("^(https?:)?//%s:?\\d*/", serverName));
-                    infoUrl = serverUrlPattern.matcher(infoUrl).replaceFirst("/");
+                    for (String serverName : serverNames) {
+                        // if the supplied url starts with protocol//serverName:port/
+                        Pattern serverUrlPattern = Pattern.compile(String.format("^(https?:)?//%s:?\\d*/", serverName));
+                        infoUrl = serverUrlPattern.matcher(infoUrl).replaceFirst("/");
+                    }
                 }
                 String description = StringUtils.trimToNull(request.getParameter("description"));
     
