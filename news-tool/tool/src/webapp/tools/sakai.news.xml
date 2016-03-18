@@ -7,7 +7,7 @@
 			title="News (RSS)"
 			description="For viewing RSS (or Atom) feeds such as news headlines, podcasts or blog posts.">
 
-		<configuration name="channel-url" value=" http://rss.oucs.ox.ac.uk/oucs/weblearn-news/rss20.xml" />
+		<configuration name="channel-url" value="http://blogs.it.ox.ac.uk/adamweblearn/feed/" />
 
 		<category name="course" />
 		<category name="project" />
